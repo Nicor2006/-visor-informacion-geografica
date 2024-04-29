@@ -37,16 +37,16 @@ La instrucción iniciará el proyecto en su entorno local y se abrirá en el nav
 
     2.4 Añadir un marker en el centro del mapa
 
-    2.5 Del siguiente servidor de mapas con url https://geoservicios.yopal.gov.co/geoserver/web/
+    2.5 Del siguiente servidor de mapas con url [https://gesstorservices.com/geoserver/web/](https://gesstorservices.com/geoserver/web/?0)
     
     2.5.1 Se debe cargar las siguientes capas al geovisor:
-        yopal:gc_predios_catastro
-        yopal:u_perimetro
+        repelon:lc_terreno
+        repelon:cc_sectorrural
 
-    2.5.2 Al darle click a la capa de gc_predios_catastro se debe mostrar UN MODAL del predio con los siguientes atributos:
+    2.5.2 Al darle click a la capa de lc_terreno se debe mostrar UN MODAL del predio con los siguientes atributos:
 
-    1. codigo_catastral
-    2. codigo_catastral_anterior
+    1. etiqueta
+    2. area_terreno
 
 
 ## 3. Despliegue:
