@@ -29,9 +29,16 @@ const awesomeIcon = AwesomeMarkersIcon("fa", "heart", "red");
 L.marker([10.4935, -75.124], { icon: awesomeIcon }).addTo(map);
 
 // Cargar capa lc_terreno
-const lcTerrenoLayer = loadWMSLayer(
+loadWMSLayer(
   map,
   "repelon:lc_terreno",
+  "https://gesstorservices.com/geoserver/repelon/wms"
+);
+
+//carga capa de cc_sectorrural
+loadWMSLayer(
+  map,
+  "repelon:cc_sectorrural",
   "https://gesstorservices.com/geoserver/repelon/wms"
 );
 
