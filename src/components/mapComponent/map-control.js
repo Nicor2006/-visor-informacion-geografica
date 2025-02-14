@@ -1,5 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import "./map.scss";
+import "leaflet.fullscreen/Control.FullScreen.css";
+import "leaflet.fullscreen";
 
 const L = require("leaflet");
 import { mapa_topografico } from "./layers/control-layers";
@@ -11,6 +13,11 @@ export var map = L.map("map", {
   layers: [mapa_topografico],
 });
 
-// Controles de zoom y escala
+// Control de zoom
 L.control.zoom({ position: "topright" }).addTo(map);
+
+// Control de escala
 new L.control.scale({ imperial: false }).addTo(map);
+
+//Control de pantalla completa
+L.control.fullscreen({ position: "topleft" }).addTo(map);
