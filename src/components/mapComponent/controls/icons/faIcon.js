@@ -1,7 +1,8 @@
-const L =require ('leaflet');
+const L = require("leaflet");
 
-export var faIcon =(url,size,className)=> L.divIcon({
+export var faIcon = (url, size, className) =>
+  L.divIcon({
     html: url,
     iconSize: size,
-    className: className
-});
+    className: className,
+  });

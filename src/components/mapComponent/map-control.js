@@ -3,10 +3,10 @@ import "./map.scss";
 import "leaflet.fullscreen/Control.FullScreen.css";
 import "leaflet.fullscreen";
 import { AwesomeMarkersIcon } from "./controls/icons/famIcon";
-import { loadWMSLayer, addClickEventToWMS } from "./layers/service/LayersWMS";
+import { loadWMSLayer, addClickEventToWMS } from "../service/LayersWMS";
 import { mapa_topografico } from "./layers/control-layers";
-import { showModal } from "./layers/service/modal";
-import { addPrintButton } from "./layers/service/printButton";
+import { showModal } from "../service/modal";
+import { addPrintButton } from "../service/printButton";
 
 const L = require("leaflet");
 

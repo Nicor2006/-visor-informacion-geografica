@@ -1,9 +1,9 @@
-import 'leaflet/dist/leaflet.css';
-const L =require ('leaflet');
+import "leaflet/dist/leaflet.css";
+const L = require("leaflet");
 
-export var imgIcon=(icon,sizeIcon)=>{
+export var imgIcon = (icon, sizeIcon) => {
   return L.icon({
     iconUrl: icon,
-    iconSize:sizeIcon, // size of the icon
+    iconSize: sizeIcon, // size of the icon
   });
-}
+};
