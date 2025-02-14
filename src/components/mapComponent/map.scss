@@ -1,32 +1,37 @@
-@import '../../scss/sizes.scss';
-#map { 
-  height:  100vh; 
-  position:absolute;
-  right:0;
-  top:0;
-  bottom:0;
-  
-  @include tablet{
-    &.nonactive{
-        width: 92%;
-        width: calc(100% - 46px);
-        width: -moz-calc(100% - 46px);
-        width: -webkit-calc(100% - 46px);
-    }
+@import "../../scss/sizes.scss";
 
-  }
-  @include desktop{
-    &.nonactive{
-      width: 97%;
-      width: calc(100% - 46px);
-      width: -moz-calc(100% - 46px);
-      width: -webkit-calc(100% - 46px);
-    } 
+html,
+body,
+#content {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Evitar barras de desplazamiento */
+}
+
+#map {
+  height: 100vh; /* 100% de la altura de la pantalla */
+  width: 100vw; /* 100% del ancho de la pantalla */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+@include tablet {
+  #map.nonactive {
+    height: 100vh;
+    width: 100vw; /* Mantener el mapa en pantalla completa */
   }
 }
 
+@include desktop {
+  #map.nonactive {
+    height: 100vh;
+    width: 100vw; /* Mantener el mapa en pantalla completa */
+  }
+}
 
 .leaflet-left .leaflet-control-scale {
   margin-left: 10px;
 }
-
