@@ -5,6 +5,8 @@ import "leaflet.fullscreen";
 import { AwesomeMarkersIcon } from "./controls/icons/famIcon";
 import { loadWMSLayer, addClickEventToWMS } from "./layers/service/LayersWMS";
 import { mapa_topografico } from "./layers/control-layers";
+import { showModal } from "./layers/service/modal";
+import { addPrintButton } from "./layers/service/printButton";
 
 const L = require("leaflet");
 
@@ -28,14 +30,12 @@ L.control.fullscreen({ position: "topleft" }).addTo(map);
 const awesomeIcon = AwesomeMarkersIcon("fa", "heart", "red");
 L.marker([10.4935, -75.124], { icon: awesomeIcon }).addTo(map);
 
-// Cargar capa lc_terreno
+// Cargar capa lc_terreno y de cc_sectorr
 loadWMSLayer(
   map,
   "repelon:lc_terreno",
   "https://gesstorservices.com/geoserver/repelon/wms"
 );
-
-//carga capa de cc_sectorrural
 loadWMSLayer(
   map,
   "repelon:cc_sectorrural",
@@ -49,32 +49,13 @@ addClickEventToWMS(
   "https://gesstorservices.com/geoserver/repelon/wms",
   (featureProperties) => {
     const { etiqueta, area_terreno } = featureProperties;
-
-    // Crear el contenido del modal
     const modalContent = `
-      <div>
-        <h3>Información del Terreno</h3>
-        <p><strong>Etiqueta:</strong> ${etiqueta}</p>
-        <p><strong>Área del terreno:</strong> ${area_terreno} m²</p>
-      </div>
+      <p><strong>Etiqueta:</strong> ${etiqueta}</p>
+      <p><strong>Área del terreno:</strong> ${area_terreno} m²</p>
     `;
-
-    // Mostrar modal
-    const modal = document.createElement("div");
-    modal.id = "info-modal";
-    modal.className = "modal";
-    modal.innerHTML = modalContent;
-
-    // Agregar botón para cerrar el modal
-    const closeButton = document.createElement("button");
-    closeButton.textContent = "×"; // Botón de cierre
-    closeButton.className = "modal-close-button"; // Clase para estilo
-    closeButton.addEventListener("click", () => {
-      document.body.removeChild(modal);
-    });
-    modal.appendChild(closeButton);
-
-    // Mostrar el modal en el DOM
-    document.body.appendChild(modal);
+    showModal("Información del Terreno", modalContent);
   }
 );
+
+// Agregar el botón de impresión
+addPrintButton(map);

@@ -1,15 +1,5 @@
 @import "../../scss/sizes.scss";
 
-html,
-body,
-#content {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden; /* Evitar barras de desplazamiento */
-}
-
 #map {
   height: 100vh; /* 100% de la altura de la pantalla */
   width: 100vw; /* 100% del ancho de la pantalla */
@@ -79,4 +69,23 @@ body,
 
 .modal button.modal-close-button:hover {
   background-color: #0056b3;
+}
+
+@media print {
+  #map {
+    height: auto;
+  }
+
+  .mapaCompleto {
+    height: 50vh;
+    width: 100%;
+    page-break-after: always; /* Salto de página después de la primera mitad */
+    overflow: visible; /* Asegurar que se muestre todo el contenido */
+  }
+
+  /* Ocultar controles innecesarios */
+  .leaflet-control,
+  .print-button {
+    display: none;
+  }
 }
