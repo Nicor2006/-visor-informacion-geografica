@@ -2,7 +2,7 @@ import "leaflet/dist/leaflet.css";
 import "./map.scss";
 import "leaflet.fullscreen/Control.FullScreen.css";
 import "leaflet.fullscreen";
-import { AwesomeMarkersIcon } from "./controls/icons/famIcon";
+import { AwesomeMarkersIcon } from "../markers/icons/famIcon";
 import { loadWMSLayer, addClickEventToWMS } from "../service/LayersWMS";
 import { mapa_topografico } from "./layers/control-layers";
 import { showModal } from "../service/modal";
