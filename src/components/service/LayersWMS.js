@@ -59,9 +59,8 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       .then((response) => response.json())
       .then((data) => {
         if (data.features && data.features.length > 0) {
+          // Mostrar la información
           handleFeatureInfo(data.features[0].properties);
-          clearPreviousLayer();
-          currentLayer = loadWMSLayer(map, layerName, wmsUrl); // Cargar una nueva capa
         }
       })
       .catch((error) =>
@@ -75,9 +74,21 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
 
   // Configuramos el evento de tap en Hammer.js
   hammer.on("tap", (e) => {
-    handleMapClick(e); // Ejecutar el clic en el mapa cuando se hace tap
+    // Limpiar la capa WMS previa y cargar una nueva capa
+    clearPreviousLayer(); // Limpiar la capa anterior
+    currentLayer = loadWMSLayer(map, layerName, wmsUrl); // Cargar la nueva capa
+
+    // Ejecutar el clic en el mapa cuando se hace tap
+    handleMapClick(e);
   });
 
   // También agregamos el evento de clic en Leaflet (para otros dispositivos)
-  map.on("click", handleMapClick);
+  map.on("click", (e) => {
+    // Limpiar la capa WMS previa y cargar una nueva capa
+    clearPreviousLayer(); // Limpiar la capa anterior
+    currentLayer = loadWMSLayer(map, layerName, wmsUrl); // Cargar la nueva capa
+
+    // Ejecutar el clic en el mapa
+    handleMapClick(e);
+  });
 }
