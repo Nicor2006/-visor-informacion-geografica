@@ -22,6 +22,7 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
 
 // Función para agregar evento de clic
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
+  // Función para manejar clic o tap
   const handleMapClick = (e) => {
     const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
     const bounds = map.getBounds().toBBoxString(); // bbox actualizado
@@ -61,23 +62,29 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   const mapElement = map.getContainer();
   const hammer = new Hammer(mapElement);
 
+  // Función común para mover el mapa a la ubicación seleccionada
+  const moveMapToLatLng = (latLng) => {
+    map.setView(latLng, map.getZoom(), { animate: true });
+  };
+
+  // Detectar tap
   hammer.on("tap", (e) => {
-    //se muestra la info
-    handleMapClick(e);
     // Obtener las coordenadas de la posición donde se hizo el tap
     const latLng = map.mouseEventToLatLng(e.originalEvent);
 
     // Mover el mapa a la posición del tap
-    map.setView(latLng, map.getZoom(), { animate: true });
+    moveMapToLatLng(latLng);
+
+    // Ejecutar la función de clic con las coordenadas del tap
+    handleMapClick(e);
   });
 
+  // Manejar clic en dispositivos no táctiles
   map.on("click", (e) => {
-    // Obtener las coordenadas de la posición donde se hizo el tap
-    const latLng = map.mouseEventToLatLng(e.originalEvent);
+    // Mover el mapa a la posición del clic
+    moveMapToLatLng(e.latlng);
 
-    // Mover el mapa a la posición del tap
-    map.setView(latLng, map.getZoom(), { animate: true });
-
+    // Ejecutar la función de clic con las coordenadas del clic
     handleMapClick(e);
   });
 }
