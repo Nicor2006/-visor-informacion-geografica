@@ -1,5 +1,4 @@
 const L = require("leaflet");
-import Hammer from "hammerjs"; // Importar Hammer.js
 
 const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b"; // Se recomienda variables de entorno
 
@@ -57,11 +56,6 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       );
   };
 
-  // Usar Hammer.js para manejar eventos táctiles
-  const mapElement = map.getContainer();
-  const hammer = new Hammer(mapElement);
-
-  hammer.on("tap", (e) => handleMapClick(e));
-
   map.on("click", handleMapClick);
+  map.on("pointerdown", handleMapClick);
 }
