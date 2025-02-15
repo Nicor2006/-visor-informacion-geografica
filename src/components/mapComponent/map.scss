@@ -89,3 +89,10 @@
     display: none;
   }
 }
+
+/* Esto previene que el navegador emule eventos de mouse en dispositivos táctiles */
+@media (pointer: coarse) {
+  body {
+    touch-action: manipulation;
+  }
+}
