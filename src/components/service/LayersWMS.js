@@ -54,8 +54,17 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
         console.error("Error al obtener la información:", error)
       );
   };
+  let touchDetected = false;
 
-  // Escuchar tanto clic como eventos táctiles
-  map.on("click", handleMapClick);
-  map.on("touchend", handleMapClick);
+  map.on("touchend", (e) => {
+    touchDetected = true;
+    handleMapClick(e);
+  });
+
+  map.on("click", (e) => {
+    if (!touchDetected) {
+      handleMapClick(e);
+    }
+    touchDetected = false; // Reiniciar para la próxima interacción
+  });
 }
