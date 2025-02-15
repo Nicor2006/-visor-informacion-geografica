@@ -15,5 +15,5 @@ Debe tener instalado `npm` o `yarn` en su equipo para instalar las dependencias 
 Ejecute el siguiente comando para clonar el proyecto en su equipo local:
 
 ```bash
-git clone https://github.com/desarrollador2geo/prueba_ingreso.git
+git clone https://github.com/Nicor2006/-visor-informacion-geografica.git
 
