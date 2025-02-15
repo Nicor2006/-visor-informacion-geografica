@@ -57,9 +57,11 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       );
   };
 
+  // Usar Hammer.js para manejar eventos táctiles
+  const mapElement = map.getContainer();
   const hammer = new Hammer(mapElement);
 
-  hammer.on("tap", handleMapClick);
+  hammer.on("tap", (e) => handleMapClick(e));
 
   map.on("click", handleMapClick);
 }
