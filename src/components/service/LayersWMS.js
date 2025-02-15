@@ -10,7 +10,7 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
     format: "image/png",
     transparent: true,
     attribution: "Gesstor Services",
-    crs: L.CRS.EPSG4326,
+    crs: L.CRS.EPSG4326, //permite al layer saber las cordenadas de latitud y longitud.
     authkey: authKey,
   };
 
@@ -39,6 +39,7 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       authkey: authKey,
     };
 
+    //Junta la URL con los QueryParams
     const queryString = new URLSearchParams(params).toString();
     const fullUrl = `${wmsUrl}?${queryString}`;
 
