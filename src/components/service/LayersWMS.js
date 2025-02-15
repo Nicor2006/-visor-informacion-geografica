@@ -1,5 +1,6 @@
 const L = require("leaflet");
 import Hammer from "hammerjs";
+import { createTapFeedback } from "./tapFeedBack.js";
 
 const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b";
 
@@ -20,7 +21,7 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
 }
 
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
-  const getWMSInfo = (x, y) => {
+  const getWMSInfo = (x, y, latlng) => {
     const mapSize = map.getSize();
     const bounds = map.getBounds().toBBoxString();
 
@@ -42,6 +43,14 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
 
     const queryString = new URLSearchParams(params).toString();
     const fullUrl = `${wmsUrl}?${queryString}`;
+
+    // Centrar el mapa en las coordenadas
+    if (latlng) {
+      map.panTo(latlng, {
+        animate: true,
+        duration: 0.5,
+      });
+    }
 
     fetch(fullUrl)
       .then((response) => {
@@ -76,29 +85,14 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       const x = ev.center.x - rect.left;
       const y = ev.center.y - rect.top;
 
-      // Mostrar feedback visual simple
-      const dot = document.createElement("div");
-      dot.style.cssText = `
-        position: absolute;
-        left: ${x}px;
-        top: ${y}px;
-        width: 10px;
-        height: 10px;
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 50%;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        opacity: 1;
-        transition: opacity 0.3s ease-out;
-      `;
+      // Convertir coordenadas de pantalla a coordenadas geográficas
+      const point = L.point(x, y);
+      const latlng = map.containerPointToLatLng(point);
 
-      mapElement.appendChild(dot);
-      setTimeout(() => {
-        dot.style.opacity = "0";
-        setTimeout(() => dot.remove(), 300);
-      }, 200);
+      // Mostrar feedback visual
+      createTapFeedback(x, y, mapElement);
 
-      getWMSInfo(x, y);
+      getWMSInfo(x, y, latlng);
     });
   } catch (error) {
     console.error("Error al inicializar Hammer.js:", error);
@@ -107,12 +101,17 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       const rect = mapElement.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      getWMSInfo(x, y);
+      const point = L.point(x, y);
+      const latlng = map.containerPointToLatLng(point);
+
+      createTapFeedback(x, y, mapElement);
+      getWMSInfo(x, y, latlng);
     });
   }
 
   // Mantener el evento de clic normal para dispositivos no táctiles
   map.on("click", (e) => {
-    getWMSInfo(e.containerPoint.x, e.containerPoint.y);
+    createTapFeedback(e.containerPoint.x, e.containerPoint.y, mapElement);
+    getWMSInfo(e.containerPoint.x, e.containerPoint.y, e.latlng);
   });
 }
