@@ -16,4 +16,18 @@ Ejecute el siguiente comando para clonar el proyecto en su equipo local:
 
 ```bash
 git clone https://github.com/Nicor2006/-visor-informacion-geografica.git
+```
 
+### **1.3. Instalación de dependencias**
+
+Navegue al directorio del proyecto y ejecute el siguiente comando para instalar las dependencias necesarias:
+
+```bash
+npm install
+```
+
+## **2. Despliegue**
+
+El visor de información geográfica se encuentra desplegado y es accesible a través del siguiente enlace:
+
+[Visor de Información Geográfica - Despliegue en Vercel](https://visor-informacion-geografica.vercel.app)
