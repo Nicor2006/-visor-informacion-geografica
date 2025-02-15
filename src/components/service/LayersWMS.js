@@ -22,7 +22,7 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
 
 // Función para agregar evento de clic y mostrar información del terreno
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
-  map.on("click tap", function (e) {
+  const handleMapClick = (e) => {
     const params = {
       service: "WMS",
       version: "1.1.1",
@@ -39,7 +39,7 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       authkey: authKey,
     };
 
-    //Junta la URL con los QueryParams
+    // Junta la URL con los QueryParams
     const queryString = new URLSearchParams(params).toString();
     const fullUrl = `${wmsUrl}?${queryString}`;
 
@@ -53,5 +53,9 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       .catch((error) =>
         console.error("Error al obtener la información:", error)
       );
-  });
+  };
+
+  // Escuchar tanto clic como eventos táctiles
+  map.on("click", handleMapClick);
+  map.on("touchend", handleMapClick);
 }
