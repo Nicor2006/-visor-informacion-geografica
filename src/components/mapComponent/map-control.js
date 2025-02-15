@@ -4,9 +4,14 @@ import "leaflet.fullscreen/Control.FullScreen.css";
 import "leaflet.fullscreen";
 import { AwesomeMarkersIcon } from "../markers/icons/famIcon";
 import { loadWMSLayer, addClickEventToWMS } from "../service/LayersWMS";
-import { mapa_topografico } from "../layers/control-layers";
 import { showModal } from "../service/modal";
 import { addPrintButton } from "../service/printButton";
+import {
+  standard_osm,
+  carto_light,
+  mapa_topografico,
+  standard_osm_mm,
+} from "../layers/control-layers.js";
 
 const L = require("leaflet");
 
@@ -14,8 +19,37 @@ const L = require("leaflet");
 export var map = L.map("map", {
   center: [10.4944, -75.1242],
   zoom: 15,
-  layers: [mapa_topografico],
+  layers: [mapa_topografico], // Capa base inicial
 });
+
+// Definir las capas base
+const baseMaps = {
+  "Mapa Topográfico": mapa_topografico,
+  "Mapa OSM Estándar": standard_osm,
+  "Mapa OSM Estándar (MM)": standard_osm_mm,
+  "Carto Light": carto_light,
+};
+
+// Definir las superposiciones (WMS)
+const overlayMaps = {
+  "Terreno (LC)": loadWMSLayer(
+    map,
+    "repelon:lc_terreno",
+    "https://gesstorservices.com/geoserver/repelon/wms"
+  ),
+  "Sector Rural (CC)": loadWMSLayer(
+    map,
+    "repelon:cc_sectorrural",
+    "https://gesstorservices.com/geoserver/repelon/wms"
+  ),
+};
+
+// Agregar el control de capas al mapa
+L.control
+  .layers(baseMaps, overlayMaps, {
+    position: "topleft", // Posición del control de capas
+  })
+  .addTo(map);
 
 // Control de zoom
 L.control.zoom({ position: "topright" }).addTo(map);
@@ -23,24 +57,9 @@ L.control.zoom({ position: "topright" }).addTo(map);
 // Control de escala
 new L.control.scale({ imperial: false }).addTo(map);
 
-// Control de pantalla completa
-L.control.fullscreen({ position: "topleft" }).addTo(map);
-
 // Se crea el marcador
 const awesomeIcon = AwesomeMarkersIcon("fa", "heart", "red");
 L.marker([10.4935, -75.124], { icon: awesomeIcon }).addTo(map);
-
-// Cargar capa lc_terreno y de cc_sectorr
-loadWMSLayer(
-  map,
-  "repelon:lc_terreno",
-  "https://gesstorservices.com/geoserver/repelon/wms"
-);
-loadWMSLayer(
-  map,
-  "repelon:cc_sectorrural",
-  "https://gesstorservices.com/geoserver/repelon/wms"
-);
 
 // Evento de clic para mostrar información del terreno
 addClickEventToWMS(

@@ -1,8 +1,7 @@
 const L = require("leaflet");
 import Hammer from "hammerjs"; // Importar Hammer.js
 
-// Definir la authkey
-const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b"; // se usa asi para que funcione, pero es recomendable usar las variables de entorno
+const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b"; // Se recomienda variables de entorno
 
 // Función para cargar una capa WMS
 export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
@@ -11,7 +10,7 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
     format: "image/png",
     transparent: true,
     attribution: "Gesstor Services",
-    crs: L.CRS.EPSG4326, //permite al layer saber las cordenadas de latitud y longitud.
+    crs: L.CRS.EPSG4326,
     authkey: authKey,
   };
 
@@ -21,9 +20,12 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
   return wmsLayer;
 }
 
-// Función para agregar evento de clic y mostrar información del terreno
+// Función para agregar evento de clic
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   const handleMapClick = (e) => {
+    const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
+    const bounds = map.getBounds().toBBoxString(); // bbox actualizado
+
     const params = {
       service: "WMS",
       version: "1.1.1",
@@ -34,13 +36,12 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       crs: "EPSG:4326",
       x: e.containerPoint?.x || 0,
       y: e.containerPoint?.y || 0,
-      width: map.getSize().x,
-      height: map.getSize().y,
-      bbox: map.getBounds().toBBoxString(),
+      width: mapSize.x, // Tamaño actualizado
+      height: mapSize.y,
+      bbox: bounds, // bbox actualizado
       authkey: authKey,
     };
 
-    // Junta la URL con los QueryParams
     const queryString = new URLSearchParams(params).toString();
     const fullUrl = `${wmsUrl}?${queryString}`;
 
@@ -57,18 +58,21 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   };
 
   // Usar Hammer.js para manejar eventos táctiles
-  const mapElement = map.getContainer(); // Obtener el contenedor del mapa
+  const mapElement = map.getContainer();
   const hammer = new Hammer(mapElement);
 
-  // Escuchar eventos de "tap" (toque simple)
   hammer.on("tap", (e) => handleMapClick(e));
-
-  // Escuchar eventos de "doubletap" (doble toque)
   hammer.on("doubletap", (e) => {
-    console.log("Doble toque detectado en:", e.center); // Opcional: Log para depuración
-    handleMapClick(e); // También puedes realizar acciones específicas para doble toque
+    console.log("Doble toque detectado en:", e.center);
+    handleMapClick(e);
   });
 
-  // Escuchar eventos de clic para dispositivos sin soporte táctil
   map.on("click", handleMapClick);
+
+  // Ajustar el mapa al entrar o salir de fullscreen
+  document.addEventListener("fullscreenchange", () => {
+    setTimeout(() => {
+      map.invalidateSize(); // Redimensiona el mapa correctamente
+    }, 200);
+  });
 }
