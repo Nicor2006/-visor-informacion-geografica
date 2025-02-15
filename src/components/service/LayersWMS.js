@@ -56,8 +56,8 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   };
 
   // Escuchar tanto clic como eventos táctiles
-  map.on("pointerdown", handleMapClick);
-  map.on("pointerup", handleMapClick);
-  map.on("touchstart", handleMapClick);
-  map.on("mousedown", handleMapClick);
+  map.on("pointerdown", handleMapClick, { passive: false });
+  map.on("pointerup", handleMapClick, { passive: false });
+  map.on("touchstart", handleMapClick, { passive: false });
+  map.on("mousedown", handleMapClick, { passive: false });
 }
