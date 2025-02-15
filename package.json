@@ -7,8 +7,7 @@
     "preinstall": "npm install -g parcel-bundler",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel src/index.html",
-    "build": "parcel build --public-url . src/index.html --out-dir build",
-    "deploy": "gh-pages -d build --repo https://github.com/Nicor2006/-visor-informacion-geografica.git"
+    "build": "parcel build --public-url . src/index.html --out-dir build"
   },
   "author": "Geoproyecciones SAS",
   "license": "ISC",
