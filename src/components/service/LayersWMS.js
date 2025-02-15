@@ -62,13 +62,23 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   const hammer = new Hammer(mapElement);
 
   hammer.on("tap", (e) => {
-    // Primero, actualizamos el bbox para forzar una consulta con las coordenadas correctas
-    const bounds = map.getBounds().toBBoxString();
-    handleMapClick(e); // Ejecutar el clic en el mapa cuando se hace tap
+    // Obtener las coordenadas de la posición donde se hizo el tap
+    const latLng = map.mouseEventToLatLng(e.originalEvent);
+
+    // Mover el mapa a la posición del tap
+    map.setView(latLng, map.getZoom(), { animate: true });
+
+    // Luego, realizamos el clic en el mapa
+    handleMapClick(e);
   });
 
   map.on("click", (e) => {
-    const bounds = map.getBounds().toBBoxString(); // Recalcular el bbox cada vez que se haga clic
+    // Obtener las coordenadas de la posición donde se hizo el tap
+    const latLng = map.mouseEventToLatLng(e.originalEvent);
+
+    // Mover el mapa a la posición del tap
+    map.setView(latLng, map.getZoom(), { animate: true });
+
     handleMapClick(e);
   });
 }
