@@ -62,14 +62,13 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   const hammer = new Hammer(mapElement);
 
   hammer.on("tap", (e) => {
+    //se muestra la info
+    handleMapClick(e);
     // Obtener las coordenadas de la posición donde se hizo el tap
     const latLng = map.mouseEventToLatLng(e.originalEvent);
 
     // Mover el mapa a la posición del tap
     map.setView(latLng, map.getZoom(), { animate: true });
-
-    // Luego, realizamos el clic en el mapa
-    handleMapClick(e);
   });
 
   map.on("click", (e) => {
