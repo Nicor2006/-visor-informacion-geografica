@@ -1,7 +1,7 @@
 const L = require("leaflet");
 import Hammer from "hammerjs";
 
-const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b";
+const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b"; //Lo hice asi para que se pueda ver, pero es mucho mejor usar variables de entorno
 
 //Esta funcion sirve para cargar las layers del WMS a traves de una URL
 export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
