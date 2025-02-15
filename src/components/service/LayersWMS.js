@@ -1,28 +1,12 @@
-const L = require("leaflet");
-import Hammer from "hammerjs"; // Importar Hammer.js
-
-const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b"; // Se recomienda variables de entorno
-
-// Función para cargar una capa WMS
-export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
-  const defaultOptions = {
-    layers: layerName,
-    format: "image/png",
-    transparent: true,
-    attribution: "Gesstor Services",
-    crs: L.CRS.EPSG4326,
-    authkey: authKey,
-  };
-
-  const layerOptions = { ...defaultOptions, ...options };
-  const wmsLayer = L.tileLayer.wms(wmsUrl, layerOptions);
-  wmsLayer.addTo(map);
-  return wmsLayer;
-}
-
-// Función para agregar evento de clic
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
+  let activeLayerRequest = null; // Variable para almacenar la solicitud activa
+
   const handleMapClick = (e) => {
+    // Si hay una solicitud activa anterior, la cancelamos (abortar la solicitud)
+    if (activeLayerRequest) {
+      activeLayerRequest.abort();
+    }
+
     const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
     const bounds = map.getBounds().toBBoxString(); // bbox actualizado
 
@@ -45,11 +29,12 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
     const queryString = new URLSearchParams(params).toString();
     const fullUrl = `${wmsUrl}?${queryString}`;
 
-    fetch(fullUrl)
+    // Hacer la solicitud de la capa WMS y almacenar la solicitud activa
+    activeLayerRequest = fetch(fullUrl)
       .then((response) => response.json())
       .then((data) => {
         if (data.features && data.features.length > 0) {
-          handleFeatureInfo(data.features[0].properties);
+          handleFeatureInfo(data.features[0].properties); // Muestra la información
         }
       })
       .catch((error) =>
@@ -57,11 +42,20 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       );
   };
 
-  // Usar Hammer.js para manejar eventos táctiles
+  // Usar Hammer.js para manejar eventos táctiles (móviles)
   const mapElement = map.getContainer();
   const hammer = new Hammer(mapElement);
 
-  hammer.on("tap", (e) => handleMapClick(e));
+  // Ejecutar el clic en el mapa cuando se hace tap
+  hammer.on("tap", (e) => {
+    handleMapClick(e);
+  });
 
+  // También agregamos el evento de clic en Leaflet (para otros dispositivos)
   map.on("click", handleMapClick);
+
+  // Limpiar el estado de la solicitud cuando el mapa se mueva
+  map.on("moveend", () => {
+    activeLayerRequest = null;
+  });
 }
