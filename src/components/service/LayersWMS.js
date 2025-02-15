@@ -24,6 +24,8 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   // Función para manejar clic o tap
   const handleMapClick = (e) => {
+    const latLng = e.latlng; // Obtiene directamente las coordenadas del mapa
+
     const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
     const bounds = map.getBounds().toBBoxString(); // bbox actualizado
 
