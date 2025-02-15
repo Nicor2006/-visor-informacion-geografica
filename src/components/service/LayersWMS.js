@@ -22,6 +22,16 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
 
 // Función para agregar evento de clic y manejar la información de la capa WMS
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
+  let currentLayer = null; // Variable para almacenar la capa WMS actual
+
+  // Función para limpiar la capa WMS previamente cargada
+  const clearPreviousLayer = () => {
+    if (currentLayer) {
+      map.removeLayer(currentLayer); // Eliminar la capa anterior del mapa
+      currentLayer = null; // Limpiar la referencia a la capa
+    }
+  };
+
   const handleMapClick = (e) => {
     const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
     const bounds = map.getBounds().toBBoxString(); // bbox actualizado
@@ -49,8 +59,9 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       .then((response) => response.json())
       .then((data) => {
         if (data.features && data.features.length > 0) {
-          // Solo mostrar la información si hay características
           handleFeatureInfo(data.features[0].properties);
+          clearPreviousLayer();
+          currentLayer = loadWMSLayer(map, layerName, wmsUrl); // Cargar una nueva capa
         }
       })
       .catch((error) =>
