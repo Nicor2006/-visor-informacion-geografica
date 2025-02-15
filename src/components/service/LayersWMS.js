@@ -50,6 +50,7 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       .then((response) => response.json())
       .then((data) => {
         if (data.features && data.features.length > 0) {
+          // Llamar la función para manejar la información
           handleFeatureInfo(data.features[0].properties);
         }
       })
