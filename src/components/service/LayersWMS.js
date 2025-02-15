@@ -1,9 +1,8 @@
 const L = require("leaflet");
-import Hammer from "hammerjs"; // Importar Hammer.js
+import Hammer from "hammerjs";
 
-const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b"; // Se recomienda variables de entorno
+const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b";
 
-// Función para cargar una capa WMS
 export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
   const defaultOptions = {
     layers: layerName,
@@ -20,14 +19,10 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
   return wmsLayer;
 }
 
-// Función para agregar evento de clic
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
-  // Función para manejar clic o tap
-  const handleMapClick = (e) => {
-    const latLng = e.latlng; // Obtiene directamente las coordenadas del mapa
-
-    const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
-    const bounds = map.getBounds().toBBoxString(); // bbox actualizado
+  const getWMSInfo = (x, y) => {
+    const mapSize = map.getSize();
+    const bounds = map.getBounds().toBBoxString();
 
     const params = {
       service: "WMS",
@@ -37,11 +32,11 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       query_layers: layerName,
       info_format: "application/json",
       crs: "EPSG:4326",
-      x: e.containerPoint?.x || 0,
-      y: e.containerPoint?.y || 0,
-      width: mapSize.x, // Tamaño actualizado
+      x: Math.round(x),
+      y: Math.round(y),
+      width: mapSize.x,
       height: mapSize.y,
-      bbox: bounds, // bbox actualizado
+      bbox: bounds,
       authkey: authKey,
     };
 
@@ -49,45 +44,75 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
     const fullUrl = `${wmsUrl}?${queryString}`;
 
     fetch(fullUrl)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.features && data.features.length > 0) {
-          // Llamar la función para manejar la información
           handleFeatureInfo(data.features[0].properties);
         }
       })
-      .catch((error) =>
-        console.error("Error al obtener la información:", error)
-      );
+      .catch((error) => {
+        console.error("Error al obtener la información:", error);
+      });
   };
 
-  // Usar Hammer.js para manejar eventos táctiles
+  // Manejo de eventos táctiles
   const mapElement = map.getContainer();
-  const hammer = new Hammer(mapElement);
 
-  // Función común para mover el mapa a la ubicación seleccionada
-  const moveMapToLatLng = (latLng) => {
-    map.setView(latLng, map.getZoom(), { animate: true });
-  };
+  try {
+    // Inicializar Hammer con opciones básicas
+    const mc = new Hammer(mapElement);
 
-  // Detectar tap
-  hammer.on("tap", (e) => {
-    // Obtener las coordenadas de la posición donde se hizo el tap
-    const latLng = map.mouseEventToLatLng(e.originalEvent);
+    // Configurar reconocimiento de tap
+    mc.add(new Hammer.Tap({ event: "tap" }));
 
-    // Mover el mapa a la posición del tap
-    moveMapToLatLng(latLng);
+    // Escuchar evento tap
+    mc.on("tap", (ev) => {
+      const rect = mapElement.getBoundingClientRect();
+      const x = ev.center.x - rect.left;
+      const y = ev.center.y - rect.top;
 
-    // Ejecutar la función de clic con las coordenadas del tap
-    handleMapClick(e);
-  });
+      // Mostrar feedback visual simple
+      const dot = document.createElement("div");
+      dot.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        width: 10px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        opacity: 1;
+        transition: opacity 0.3s ease-out;
+      `;
 
-  // Manejar clic en dispositivos no táctiles
+      mapElement.appendChild(dot);
+      setTimeout(() => {
+        dot.style.opacity = "0";
+        setTimeout(() => dot.remove(), 300);
+      }, 200);
+
+      getWMSInfo(x, y);
+    });
+  } catch (error) {
+    console.error("Error al inicializar Hammer.js:", error);
+    // Fallback a eventos de clic normales si Hammer falla
+    mapElement.addEventListener("click", (e) => {
+      const rect = mapElement.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      getWMSInfo(x, y);
+    });
+  }
+
+  // Mantener el evento de clic normal para dispositivos no táctiles
   map.on("click", (e) => {
-    // Mover el mapa a la posición del clic
-    moveMapToLatLng(e.latlng);
-
-    // Ejecutar la función de clic con las coordenadas del clic
-    handleMapClick(e);
+    getWMSInfo(e.containerPoint.x, e.containerPoint.y);
   });
 }
