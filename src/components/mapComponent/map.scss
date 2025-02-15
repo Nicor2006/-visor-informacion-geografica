@@ -6,6 +6,7 @@
   position: relative;
   top: 0;
   left: 0;
+  touch-action: manipulation; /* Asegurar manipulación táctil */
 }
 
 @include tablet {
@@ -71,6 +72,13 @@
   background-color: #0056b3;
 }
 
+@media (max-width: 600px) {
+  .modal {
+    width: 90vw; /* Adaptar el ancho para pantallas pequeñas */
+    height: auto; /* Permitir crecimiento según contenido */
+  }
+}
+
 @media print {
   #map {
     height: auto;
@@ -90,9 +98,10 @@
   }
 }
 
-/* Esto previene que el navegador emule eventos de mouse en dispositivos táctiles */
+/* Estilos específicos para dispositivos táctiles */
 @media (pointer: coarse) {
-  body {
+  #map {
     touch-action: manipulation;
+    user-select: none; /* Evitar selección accidental de texto */
   }
 }
