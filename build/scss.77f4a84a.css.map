@@ -1,0 +1,1 @@
+{"version":3,"sources":["scss\\index.scss"],"names":[],"mappings":"AAEA,SACE,UAAA,CACA,YAGF,MACE,aAGF,MACE","file":"scss.77f4a84a.css","sourceRoot":"..\\src","sourcesContent":["@import \"./colors.scss\";\r\n\r\n#content {\r\n  width: 100%;\r\n  height: 100%;\r\n}\r\n\r\n.hide {\r\n  display: none;\r\n}\r\n\r\n.show {\r\n  display: block;\r\n}\r\n"]}
