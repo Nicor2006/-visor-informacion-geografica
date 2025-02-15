@@ -1,12 +1,6 @@
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
-  let activeLayerRequest = null; // Variable para almacenar la solicitud activa
-
+  // Manejador de clic en el mapa
   const handleMapClick = (e) => {
-    // Si hay una solicitud activa anterior, la cancelamos (abortar la solicitud)
-    if (activeLayerRequest) {
-      activeLayerRequest.abort();
-    }
-
     const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
     const bounds = map.getBounds().toBBoxString(); // bbox actualizado
 
@@ -18,8 +12,8 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       query_layers: layerName,
       info_format: "application/json",
       crs: "EPSG:4326",
-      x: e.containerPoint?.x || 0,
-      y: e.containerPoint?.y || 0,
+      x: e.containerPoint.x,
+      y: e.containerPoint.y,
       width: mapSize.x, // Tamaño actualizado
       height: mapSize.y,
       bbox: bounds, // bbox actualizado
@@ -29,8 +23,8 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
     const queryString = new URLSearchParams(params).toString();
     const fullUrl = `${wmsUrl}?${queryString}`;
 
-    // Hacer la solicitud de la capa WMS y almacenar la solicitud activa
-    activeLayerRequest = fetch(fullUrl)
+    // Hacer la solicitud de la capa WMS
+    fetch(fullUrl)
       .then((response) => response.json())
       .then((data) => {
         if (data.features && data.features.length > 0) {
@@ -46,16 +40,11 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   const mapElement = map.getContainer();
   const hammer = new Hammer(mapElement);
 
-  // Ejecutar el clic en el mapa cuando se hace tap
+  // Configuramos el evento de tap en Hammer.js
   hammer.on("tap", (e) => {
-    handleMapClick(e);
+    handleMapClick(e); // Ejecutar el clic en el mapa cuando se hace tap
   });
 
   // También agregamos el evento de clic en Leaflet (para otros dispositivos)
   map.on("click", handleMapClick);
-
-  // Limpiar el estado de la solicitud cuando el mapa se mueva
-  map.on("moveend", () => {
-    activeLayerRequest = null;
-  });
 }
