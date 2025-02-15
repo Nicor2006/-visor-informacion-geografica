@@ -20,18 +20,8 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
   return wmsLayer;
 }
 
-// Función para agregar evento de clic y manejar la información de la capa WMS
+// Función para agregar evento de clic
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
-  let currentLayer = null; // Variable para almacenar la capa WMS actual
-
-  // Función para limpiar la capa WMS previamente cargada
-  const clearPreviousLayer = () => {
-    if (currentLayer) {
-      map.removeLayer(currentLayer); // Eliminar la capa anterior del mapa
-      currentLayer = null; // Limpiar la referencia a la capa
-    }
-  };
-
   const handleMapClick = (e) => {
     const mapSize = map.getSize(); // Obtén el tamaño actualizado del mapa
     const bounds = map.getBounds().toBBoxString(); // bbox actualizado
@@ -59,7 +49,6 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       .then((response) => response.json())
       .then((data) => {
         if (data.features && data.features.length > 0) {
-          // Mostrar la información
           handleFeatureInfo(data.features[0].properties);
         }
       })
@@ -68,27 +57,18 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       );
   };
 
-  // Usar Hammer.js para manejar eventos táctiles (móviles)
+  // Usar Hammer.js para manejar eventos táctiles
   const mapElement = map.getContainer();
   const hammer = new Hammer(mapElement);
 
-  // Configuramos el evento de tap en Hammer.js
   hammer.on("tap", (e) => {
-    // Limpiar la capa WMS previa y cargar una nueva capa
-    clearPreviousLayer(); // Limpiar la capa anterior
-    currentLayer = loadWMSLayer(map, layerName, wmsUrl); // Cargar la nueva capa
-
-    // Ejecutar el clic en el mapa cuando se hace tap
-    handleMapClick(e);
+    // Primero, actualizamos el bbox para forzar una consulta con las coordenadas correctas
+    const bounds = map.getBounds().toBBoxString();
+    handleMapClick(e); // Ejecutar el clic en el mapa cuando se hace tap
   });
 
-  // También agregamos el evento de clic en Leaflet (para otros dispositivos)
   map.on("click", (e) => {
-    // Limpiar la capa WMS previa y cargar una nueva capa
-    clearPreviousLayer(); // Limpiar la capa anterior
-    currentLayer = loadWMSLayer(map, layerName, wmsUrl); // Cargar la nueva capa
-
-    // Ejecutar el clic en el mapa
+    const bounds = map.getBounds().toBBoxString(); // Recalcular el bbox cada vez que se haga clic
     handleMapClick(e);
   });
 }
