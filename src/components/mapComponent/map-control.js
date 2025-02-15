@@ -19,7 +19,7 @@ const L = require("leaflet");
 export var map = L.map("map", {
   center: [10.4944, -75.1242],
   zoom: 15,
-  layers: [mapa_topografico], // Capa base inicial
+  layers: [mapa_topografico],
 });
 
 // Definir las capas base
@@ -44,10 +44,10 @@ const overlayMaps = {
   ),
 };
 
-// Agregar el control de capas al mapa
+// Control de capas al mapa
 L.control
   .layers(baseMaps, overlayMaps, {
-    position: "topleft", // Posición del control de capas
+    position: "topleft",
   })
   .addTo(map);
 

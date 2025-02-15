@@ -1,3 +1,5 @@
+//Esta funcion se encarga de añadir un boton para imprimir en PDF
+
 export function addPrintButton(map) {
   const printButton = L.control({ position: "topright" });
 

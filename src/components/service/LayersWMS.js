@@ -1,9 +1,9 @@
 const L = require("leaflet");
 import Hammer from "hammerjs";
-import { createTapFeedback } from "./tapFeedBack.js";
 
 const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b";
 
+//Esta funcion sirve para cargar las layers del WMS a traves de una URL
 export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
   const defaultOptions = {
     layers: layerName,
@@ -20,6 +20,7 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
   return wmsLayer;
 }
 
+// Agrega un evento de clic o tap al mapa para obtener información de un servicio WMS.
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   const getWMSInfo = (x, y, latlng) => {
     const mapSize = map.getSize();
@@ -89,9 +90,6 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       const point = L.point(x, y);
       const latlng = map.containerPointToLatLng(point);
 
-      // Mostrar feedback visual
-      createTapFeedback(x, y, mapElement);
-
       getWMSInfo(x, y, latlng);
     });
   } catch (error) {
@@ -104,14 +102,12 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       const point = L.point(x, y);
       const latlng = map.containerPointToLatLng(point);
 
-      createTapFeedback(x, y, mapElement);
       getWMSInfo(x, y, latlng);
     });
   }
 
   // Mantener el evento de clic normal para dispositivos no táctiles
   map.on("click", (e) => {
-    createTapFeedback(e.containerPoint.x, e.containerPoint.y, mapElement);
     getWMSInfo(e.containerPoint.x, e.containerPoint.y, e.latlng);
   });
 }

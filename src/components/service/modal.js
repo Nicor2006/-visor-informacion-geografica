@@ -9,7 +9,7 @@ export const showModal = (title, content) => {
   // Crear el modal
   const modal = document.createElement("div");
   modal.id = "info-modal";
-  modal.className = "modal"; // Usará la clase "modal" definida en tu SCSS
+  modal.className = "modal";
   modal.innerHTML = `
       <h3>${title}</h3>
       <div>${content}</div>
