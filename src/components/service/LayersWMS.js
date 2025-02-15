@@ -22,7 +22,7 @@ export function loadWMSLayer(map, layerName, wmsUrl, options = {}) {
 
 // Función para agregar evento de clic y mostrar información del terreno
 export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
-  map.on("click", function (e) {
+  map.on("click tap", function (e) {
     const params = {
       service: "WMS",
       version: "1.1.1",
