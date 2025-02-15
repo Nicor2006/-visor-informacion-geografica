@@ -62,17 +62,6 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
   const hammer = new Hammer(mapElement);
 
   hammer.on("tap", (e) => handleMapClick(e));
-  hammer.on("doubletap", (e) => {
-    console.log("Doble toque detectado en:", e.center);
-    handleMapClick(e);
-  });
 
   map.on("click", handleMapClick);
-
-  // Ajustar el mapa al entrar o salir de fullscreen
-  document.addEventListener("fullscreenchange", () => {
-    setTimeout(() => {
-      map.invalidateSize(); // Redimensiona el mapa correctamente
-    }, 200);
-  });
 }
