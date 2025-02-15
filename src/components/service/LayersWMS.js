@@ -1,4 +1,5 @@
 const L = require("leaflet");
+import Hammer from "hammerjs"; // Importar Hammer.js
 
 // Definir la authkey
 const authKey = "24218beb-1da6-4f89-9a76-b7c404a5af5b"; // se usa asi para que funcione, pero es recomendable usar las variables de entorno
@@ -31,8 +32,8 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       query_layers: layerName,
       info_format: "application/json",
       crs: "EPSG:4326",
-      x: e.containerPoint.x,
-      y: e.containerPoint.y,
+      x: e.containerPoint?.x || 0,
+      y: e.containerPoint?.y || 0,
       width: map.getSize().x,
       height: map.getSize().y,
       bbox: map.getBounds().toBBoxString(),
@@ -55,9 +56,19 @@ export function addClickEventToWMS(map, layerName, wmsUrl, handleFeatureInfo) {
       );
   };
 
-  // Escuchar tanto clic como eventos táctiles
-  map.on("pointerdown", handleMapClick, { passive: false });
-  map.on("pointerup", handleMapClick, { passive: false });
-  map.on("touchstart", handleMapClick, { passive: false });
-  map.on("mousedown", handleMapClick, { passive: false });
+  // Usar Hammer.js para manejar eventos táctiles
+  const mapElement = map.getContainer(); // Obtener el contenedor del mapa
+  const hammer = new Hammer(mapElement);
+
+  // Escuchar eventos de "tap" (toque simple)
+  hammer.on("tap", (e) => handleMapClick(e));
+
+  // Escuchar eventos de "doubletap" (doble toque)
+  hammer.on("doubletap", (e) => {
+    console.log("Doble toque detectado en:", e.center); // Opcional: Log para depuración
+    handleMapClick(e); // También puedes realizar acciones específicas para doble toque
+  });
+
+  // Escuchar eventos de clic para dispositivos sin soporte táctil
+  map.on("click", handleMapClick);
 }
